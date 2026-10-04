@@ -130,7 +130,7 @@ namespace OrbisaAsp.Data.Services
             if (images != null && images.Count > 0)
             {
                 product.images =
-                    await _imageService.UploadImagesAsync(images);
+                    await _imageService.UploadImagesAsync(images, existingProduct.id);
             }
             else
             {

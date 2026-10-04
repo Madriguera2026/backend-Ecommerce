@@ -1,9 +1,11 @@
-using Amazon.DynamoDBv2;
 using Amazon.CognitoIdentityProvider;
+using Amazon.DynamoDBv2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OrbisaAsp.Data.Configuration;
 using OrbisaAsp.Data.Services;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +29,10 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.Configure<AdminSettings>(
+    builder.Configuration.GetSection("AdminSettings")
+);
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -60,7 +66,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
 var authority =
     $"https://cognito-idp.{region}.amazonaws.com/{userPoolId}";
 
@@ -82,6 +87,32 @@ builder.Services
             ValidateAudience = false
         };
     });
+
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var username = context.User.FindFirst("username")?.Value;
+
+            var adminUsernames =
+                builder.Configuration
+                    .GetSection("AdminSettings:AdminUsers")
+                    .Get<List<string>>() ?? new List<string>();
+
+            return adminUsernames.Any(
+                adminUsername =>
+                    string.Equals(
+                        adminUsername.Trim(),
+                        username.Trim(),
+                        StringComparison.OrdinalIgnoreCase
+                    )
+            );
+        });
+    });
+});
 
 builder.Services.AddAuthorization();
 
