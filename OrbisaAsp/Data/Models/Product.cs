@@ -10,6 +10,7 @@
         public GenderType gender { get; set; }
         public string description { get; set; }
         public string tag { get; set; }
+        public double price { get; set; }
         public bool isAbled { get; set; }
     }
 

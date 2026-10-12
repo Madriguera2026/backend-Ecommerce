@@ -56,6 +56,7 @@ namespace OrbisaAsp.Data.Services
                         ["gender"] = new AttributeValue { N = ((int)product.gender).ToString() },
                         ["description"] = new AttributeValue { S = product.description },
                         ["tag"] = new AttributeValue { S = product.tag },
+                        ["price"] = new AttributeValue { N = ((double)product.price).ToString() },
                         ["isAbled"] = new AttributeValue { BOOL = product.isAbled }
                     }
                 };
@@ -144,13 +145,8 @@ namespace OrbisaAsp.Data.Services
 
                 Item = new Dictionary<string, AttributeValue>
                 {
-                    ["id"] = new AttributeValue
-                    {
-                        S = product.id
-                    },
-
-                    ["images"] = new AttributeValue
-                    {
+                    ["id"] = new AttributeValue { S = product.id },
+                    ["images"] = new AttributeValue {
                         L = product.images
                             .Select(image => new AttributeValue
                             {
@@ -158,41 +154,14 @@ namespace OrbisaAsp.Data.Services
                             })
                             .ToList()
                     },
-
-                    ["name"] = new AttributeValue
-                    {
-                        S = product.name
-                    },
-
-                    ["size"] = new AttributeValue
-                    {
-                        N = ((int)product.size).ToString()
-                    },
-
-                    ["color"] = new AttributeValue
-                    {
-                        S = product.color
-                    },
-
-                    ["gender"] = new AttributeValue
-                    {
-                        N = ((int)product.gender).ToString()
-                    },
-
-                    ["description"] = new AttributeValue
-                    {
-                        S = product.description
-                    },
-
-                    ["tag"] = new AttributeValue
-                    {
-                        S = product.tag
-                    },
-
-                    ["isAbled"] = new AttributeValue
-                    {
-                        BOOL = product.isAbled
-                    }
+                    ["name"] = new AttributeValue { S = product.name },
+                    ["size"] = new AttributeValue { N = ((int)product.size).ToString() },
+                    ["color"] = new AttributeValue { S = product.color },
+                    ["gender"] = new AttributeValue { N = ((int)product.gender).ToString() },
+                    ["description"] = new AttributeValue { S = product.description },
+                    ["tag"] = new AttributeValue { S = product.tag },
+                    ["price"] = new AttributeValue { N = ((double)product.price).ToString() },
+                    ["isAbled"] = new AttributeValue { BOOL = product.isAbled }
                 }
             };
 
@@ -246,23 +215,14 @@ namespace OrbisaAsp.Data.Services
             return new Product
             {
                 id = item["id"].S,
-
                 images = images,
-
                 name = item["name"].S,
-
-                size = (SizeType)
-                    int.Parse(item["size"].N),
-
+                size = (SizeType)int.Parse(item["size"].N),
                 color = item["color"].S,
-
-                gender = (GenderType)
-                    int.Parse(item["gender"].N),
-
+                gender = (GenderType)int.Parse(item["gender"].N),
                 description = item["description"].S,
-
                 tag = item["tag"].S,
-
+                price = double.Parse(item["price"].N),
                 isAbled = (bool)item["isAbled"].BOOL
             };
         }

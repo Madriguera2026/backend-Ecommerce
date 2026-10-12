@@ -18,7 +18,7 @@ namespace OrbisaAsp.Data.Services
             if (string.IsNullOrWhiteSpace(email))
                 return false;
 
-            return _settings.Emails.Any(
+            return _settings.Usernames.Any(
                 adminEmail =>
                     string.Equals(
                         adminEmail.Trim(),

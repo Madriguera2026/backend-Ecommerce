@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CloudinaryDotNet.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OrbisaAsp.Data.DTO;
 //using OrbisaAsp.Data.DTOs.Products;
@@ -92,6 +93,7 @@ namespace OrbisaAsp.Controllers
                     gender = request.gender,
                     description = request.description,
                     tag = request.tag,
+                    price = request.price,
                     isAbled = request.isAbled
                 };
 
@@ -139,6 +141,7 @@ namespace OrbisaAsp.Controllers
                     gender = request.gender,
                     description = request.description,
                     tag = request.tag,
+                    price = request.price,
                     isAbled = request.isAbled
                 };
 

@@ -2,6 +2,6 @@
 {
     public interface IAdminService
     {
-        bool IsAdmin(string email);
+        bool IsAdmin(string username);
     }
 }

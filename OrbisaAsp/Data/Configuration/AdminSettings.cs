@@ -2,6 +2,6 @@
 {
     public class AdminSettings
     {
-        public List<string> Emails { get; set; } = new();
+        public List<string> Usernames { get; set; } = new();
     }
 }
