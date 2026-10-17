@@ -8,6 +8,7 @@ namespace OrbisaAsp.Data.Services
     public class UserService
     {
         private const string TABLE_NAME = "User";
+        private const string COGNITO_SUB_INDEX = "username-index";
 
         private readonly IAmazonDynamoDB _dynamoDb;
 
@@ -26,6 +27,7 @@ namespace OrbisaAsp.Data.Services
                     Item = new Dictionary<string, AttributeValue>
                     {
                         ["uuid"] = new AttributeValue { S = Guid.NewGuid().ToString() },
+                        ["username"] = new AttributeValue { S = user.username },
                         ["name"] = new AttributeValue { S = user.name },
                         ["whatsapp"] = new AttributeValue { S = user.whatsapp },
                     }
@@ -54,6 +56,7 @@ namespace OrbisaAsp.Data.Services
             {
                 users.Add(new User(
                     item["uuid"].S,
+                    item["username"].S,
                     item["name"].S,
                     item["whatsapp"].S
                 ));
@@ -83,9 +86,65 @@ namespace OrbisaAsp.Data.Services
 
             return new User(
                 response.Item["uuid"].S,
+                response.Item["username"].S,
                 response.Item["name"].S,
                 response.Item["whatsapp"].S
             );
+        }
+
+        public async Task<User?> GetByUsername(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+                return null;
+
+            var request = new QueryRequest
+            {
+                TableName = TABLE_NAME,
+                IndexName = COGNITO_SUB_INDEX,
+
+                KeyConditionExpression = "#sub = :sub",
+
+                ExpressionAttributeNames = new Dictionary<string, string>
+                {
+                    ["#sub"] = "username"
+                },
+
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                {
+                    [":sub"] = new AttributeValue
+                    {
+                        S = username
+                    }
+                },
+
+                Limit = 1
+            };
+
+            var response = await _dynamoDb.QueryAsync(request);
+
+            if (response.Items.Count == 0)
+                return null;
+
+            var item = response.Items[0];
+
+            return new User
+            {
+                uuid = item.TryGetValue("uuid", out var uuid)
+                    ? uuid.S
+                    : string.Empty,
+
+                username = item.TryGetValue("username", out var sub)
+                    ? sub.S
+                    : string.Empty,
+
+                name = item.TryGetValue("name", out var name)
+                    ? name.S
+                    : string.Empty,
+
+                whatsapp = item.TryGetValue("whatsapp", out var whatsapp)
+                    ? whatsapp.S
+                    : string.Empty
+            };
         }
 
         public async Task<bool> UpdateUser(string uuid, User user)

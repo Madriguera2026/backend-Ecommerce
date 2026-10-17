@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OrbisaAsp.Data.Models;
 using OrbisaAsp.Data.Services;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -13,10 +14,12 @@ namespace OrbisaApi.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly AuthService _authService;
+    private readonly UserService _userService;
 
-    public AuthController(AuthService authService)
+    public AuthController(AuthService authService, UserService userService)
     {
         _authService = authService;
+        _userService = userService;
     }
 
     [HttpPost("register")]
@@ -90,5 +93,24 @@ public class AuthController : ControllerBase
                 message = ex.Message
             });
         }
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        Console.WriteLine("User: " + User.FindFirstValue);
+        var username = User.FindFirst("username")?.Value
+            ?? User.FindFirst("username")?.Value;
+
+        if (string.IsNullOrWhiteSpace(username))
+            return Unauthorized();
+
+        var user = await _userService.GetByUsername(username);
+
+        if (user is null)
+            return NotFound();
+
+        return Ok(user);
     }
 }

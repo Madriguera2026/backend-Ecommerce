@@ -7,14 +7,18 @@ namespace OrbisaAsp.Data.Models
     {
         [DynamoDBHashKey]
         public string uuid { get; set; }
+        public string username { get; set; }
         public string name { get; set; }
         public string whatsapp { get; set; }
 
-        public User(string uuid, string name, string whatsapp)
+        public User(string uuid, string username, string name, string whatsapp)
         {
             this.uuid = uuid;
+            this.username = username;
             this.name = name;
             this.whatsapp = whatsapp;
         }
+
+        public User(){ }
     }
 }
