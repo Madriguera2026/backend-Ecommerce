@@ -3,11 +3,11 @@
     public class Order
     {
 
-        public string id { get; set; }
-        public StateType state { get; set; }
-        public DateTime date { get; set; }
+        public string id { get; set; } = string.Empty;
+        public StateType state { get; set; } = StateType.CART;
+        public DateTime date { get; set; } = DateTime.UtcNow;
         public User? user { get; set; }
-        public List<Product>? products { get; set; }
+        public List<Product>? products { get; set; } = new();
 
         public enum StateType
         {
